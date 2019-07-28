@@ -8,6 +8,8 @@ class Imports_queries(models.Manager):
         return self.aggregate(models.Max('import_id'))
     def get_data_for_patch(self, imports_id, citizens):
         return self.filter(import_id = imports_id, citizen_id = citizens)
+    def get_import_data(self, imports_id):
+        return self.filter(import_id=imports_id)
 
 class Imports(models.Model):
 
