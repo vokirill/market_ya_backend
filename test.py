@@ -163,9 +163,11 @@ data_ = json.dumps(data_, ensure_ascii=False)
 
 r = requests.patch('http://127.0.0.1:8000/imports/6/citizens/1', data = data_.encode('utf-8'))
 print(r.text)
-'''
+
 
 r = requests.get('http://127.0.0.1:8000/imports/13/citizens/birthdays')
 print(r.text)
+'''
 
-
+r = requests.get('http://127.0.0.1:8000/imports/13/towns/stat/percentile/age')
+print(r.text)

@@ -11,6 +11,9 @@ from django.utils.dateparse import parse_date
 from .support_functions import *
 from django.db import connection
 
+from .models import *
+import numpy as np
+
 
 from .models import Imports
 
@@ -76,37 +79,37 @@ def get_imports(request, imports_id):
 
 @require_http_methods(["GET"])
 def calc_birthdays(request, imports_id):
-    #data = Imports.objects.get_import_data(imports_id).values('citizen_id', 'birth_date','relatives')
-
-    query = '''
-        WITH RECURSIVE split(import_id, citizen_id, relatives_number, rest) AS (
-            SELECT import_id, citizen_id, '', relatives || ',' FROM imports_imports  WHERE import_id
-            UNION ALL
-            SELECT import_id,
-                   citizen_id, 
-                   substr(rest, 0, instr(rest, ',')),
-                   substr(rest, instr(rest, ',')+1)
-            FROM split
-            WHERE rest <> '')
-        SELECT citizen_id, relatives_number 
-        FROM split 
-        WHERE relatives_number <> '' AND import_id = {}
-        ORDER BY citizen_id, relatives_number 
-        
-    '''.format(imports_id)
-
+    query = fourth_task_query(imports_id)
     with connection.cursor() as cursor:
         cursor.execute(query)
         data = cursor.fetchall()
+    answer = {'data':{
+        '1':[],
+        '2':[],
+        '3':[],
+        '4':[],
+        '5':[],
+        '6':[],
+        '7':[],
+        '8':[],
+        '9':[],
+        '10':[],
+        '11':[],
+        '12':[]
+    }}
+    for elem in data:
+        answer['data'][str(elem[0])].append({'citizen_id':elem[1], 'presents':elem[2]})
 
-    #result =
-    return HttpResponse(str(data), status = 200)
-'''
-query = 
-        SELECT citizen_id,
-               STRFTIME('%m', birth_date) as birt_month,
-               relatives
-        FROM imports_imports 
-        WHERE imports_imports.import_id  = {}
-        .format(imports_id)
-'''
+    return JsonResponse(answer, status = 200)
+
+@require_http_methods(["GET"])
+def age_percentile (request, imports_id):
+    query = fifth_task_query(imports_id)
+    with connection.cursor() as cursor:
+        cursor.execute(query)
+        data = cursor.fetchall()
+    answer = {'data':[]}
+    for elem in data:
+        percentile = np.percentile(list(map(int , elem[1].split(','))), [0.5, 0.75, 0.99], interpolation='linear')
+        answer['data'].append({'town':elem[0], 'p50':percentile[0], 'p75':percentile[1], 'p99':percentile[2]})
+    return HttpResponse(str(answer), status= 200)
