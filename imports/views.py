@@ -28,12 +28,20 @@ def upload_treatments(request):
     except json.JSONDecodeError():
         return JsonResponse({'errors': 'Invalid JSON'}, status = 400)
 
-    citezen_list = data['citizens']
-    import_id_ = Imports.objects.get_max_import_id()['import_id__max']+1
+    citizen_list = data['citizens']
+    if not relativies_validation(citizen_list):
+        return JsonResponse({'errors': 'bad relatives dependencies'}, status = 400)
 
-    for citezen in citezen_list:
-        citezen['relatives'] = ','.join(map(str, citezen['relatives']))
-        db_row = Imports(import_id = import_id_, **citezen)
+    import_id_ = Imports.objects.get_max_import_id()['import_id__max']
+    if import_id_:
+        import_id_+=1
+    else:
+        import_id_ = 1
+
+    for citizen in citizen_list:
+        citizen['relatives'] = ','.join(map(str, citizen['relatives']))
+        citizen['birth_date'] = date_string(citizen['birth_date'])
+        db_row = Imports(import_id = import_id_, **citizen)
         db_row.save()
 
     response = {

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import requests
 import json
-'''
+
 data_ = {
     'citizens': [{
         'citizen_id': 1,
@@ -10,7 +10,7 @@ data_ = {
         'building': '1к5стр6',
         'appartment': 7,
         'name': 'Пупкин Иван Петрович',
-        'birth_date': '2000-01-05',
+        'birth_date': '05.02.2001',
         'gender': 'male',
         'relatives': [2,3,4,5,6,7,8,9,10,11,12,13],
     },
@@ -21,7 +21,7 @@ data_ = {
         'building': '2к6',
         'appartment': 7,
         'name': 'Пискосисты Сидор Сидорович',
-        'birth_date': '1965-02-05',
+        'birth_date': '05.02.1965',
         'gender': 'male',
         'relatives': [1,3],
     },
@@ -32,7 +32,7 @@ data_ = {
         'building': '2к6',
         'appartment': 10,
         'name': 'Бдышь Адольф Иванович',
-        'birth_date': '1980-03-05',
+        'birth_date': '05.03.1980',
         'gender': 'male',
         'relatives': [2,5],
     },
@@ -43,7 +43,7 @@ data_ = {
         'building': '2к6',
         'appartment': 10,
         'name': 'Бдышь Адольф Иванович',
-        'birth_date': '1980-04-05',
+        'birth_date': '05.04.1980',
         'gender': 'male',
         'relatives': [1,13],
     },
@@ -54,7 +54,7 @@ data_ = {
         'building': '2к6',
         'appartment': 10,
         'name': 'Бдышь Адольф Иванович',
-        'birth_date': '1980-05-05',
+        'birth_date': '05.05.1980',
         'gender': 'male',
         'relatives': [2,7],
     },
@@ -65,7 +65,7 @@ data_ = {
         'building': '2к6',
         'appartment': 10,
         'name': 'Бдышь Адольф Иванович',
-        'birth_date': '1980-06-05',
+        'birth_date': '05.06.1980',
         'gender': 'male',
         'relatives': [1,10],
     },
@@ -76,7 +76,7 @@ data_ = {
         'building': '2к6',
         'appartment': 10,
         'name': 'Бдышь Адольф Иванович',
-        'birth_date': '1980-07-05',
+        'birth_date': '05.07.1980',
         'gender': 'male',
         'relatives': [3,4],
     },
@@ -87,7 +87,7 @@ data_ = {
         'building': '2к6',
         'appartment': 10,
         'name': 'Бдышь Адольф Иванович',
-        'birth_date': '1980-08-05',
+        'birth_date': '05.08.1980',
         'gender': 'male',
         'relatives': [8,5],
     },
@@ -98,7 +98,7 @@ data_ = {
         'building': '2к6',
         'appartment': 10,
         'name': 'Бдышь Адольф Иванович',
-        'birth_date': '1980-09-05',
+        'birth_date': '05.09.1980',
         'gender': 'male',
         'relatives': [10,11],
     },
@@ -109,7 +109,7 @@ data_ = {
         'building': '2к6',
         'appartment': 10,
         'name': 'Бдышь Адольф Иванович',
-        'birth_date': '1980-10-05',
+        'birth_date': '05.10.1980',
         'gender': 'male',
         'relatives': [3],
     },
@@ -120,7 +120,7 @@ data_ = {
         'building': '2к6',
         'appartment': 10,
         'name': 'Бдышь Адольф Иванович',
-        'birth_date': '1980-11-05',
+        'birth_date': '05.11.1980',
         'gender': 'male',
         'relatives': [7],
     },
@@ -131,7 +131,7 @@ data_ = {
         'building': '2к6',
         'appartment': 10,
         'name': 'Бдышь Адольф Иванович',
-        'birth_date': '1980-12-05',
+        'birth_date': '05.12.1980',
         'gender': 'male',
         'relatives': [12,8],
     },
@@ -142,7 +142,7 @@ data_ = {
         'building': '2к6',
         'appartment': 10,
         'name': 'Бдышь Адольф Иванович',
-        'birth_date': '1980-01-10',
+        'birth_date': '05.01.1980',
         'gender': 'male',
         'relatives': [6],
     },
@@ -154,7 +154,7 @@ data_ = {
 data_ = json.dumps(data_, ensure_ascii=False)
 r = requests.post('http://127.0.0.1:8000/imports', data=data_.encode('utf-8'))
 print(r.text)
-
+'''
 data_ = {
     'town': 'Зажопинск-сити',
     'street': 'Гоголя-Моголя'
@@ -167,7 +167,8 @@ print(r.text)
 
 r = requests.get('http://127.0.0.1:8000/imports/13/citizens/birthdays')
 print(r.text)
-'''
+
 
 r = requests.get('http://127.0.0.1:8000/imports/13/towns/stat/percentile/age')
 print(r.text)
+'''

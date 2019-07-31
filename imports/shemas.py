@@ -3,18 +3,15 @@ PATCH_SHEMMA = {
         'properties': {
             'town':{
                 'type': 'string',
-                'minLength': 2,
-                'maxLength': 100
+                'minLength': 1,
             },
             'street':{
                 'type': 'string',
-                'minLength': 2,
-                'maxLength': 100
+                'minLength': 1
             },
             'building': {
                 'type': 'string',
-                'minLength': 1,
-                'maxLength': 100
+                'minLength': 1
             },
             'appartment':{
                 'type': 'integer',
@@ -22,17 +19,14 @@ PATCH_SHEMMA = {
             },
             'name': {
                 'type': 'string',
-                'minLength': 5,
-                'maxLength': 1000
+                'minLength': 3,
             },
             'birth_date':{
-                'type': 'string',
-                'format': 'date'
+                'type': 'string'
             },
             'gender': {
                 'type': 'string',
-                'minLength': 4,
-                'maxLength': 6
+                "enum": ['male', 'female']
             },
             'relatives': {
                 'type': 'array',
@@ -59,18 +53,15 @@ IMPORTS_SHEMMA = {
                     },
                     'town':{
                         'type': 'string',
-                        'minLength': 2,
-                        'maxLength': 100
+                        'minLength': 1,
                     },
                     'street':{
                         'type': 'string',
-                        'minLength': 2,
-                        'maxLength': 100
+                        'minLength': 1,
                     },
                     'building': {
                         'type': 'string',
                         'minLength': 1,
-                        'maxLength': 100
                     },
                     'appartment':{
                         'type': 'integer',
@@ -78,17 +69,14 @@ IMPORTS_SHEMMA = {
                     },
                     'name': {
                         'type': 'string',
-                        'minLength': 5,
-                        'maxLength': 1000
+                        'minLength': 3,
                     },
                     'birth_date':{
-                        'type': 'string',
-                        'format': 'date'
+                        'type': 'string'
                     },
                     'gender': {
                         'type': 'string',
-                        'minLength': 4,
-                        'maxLength': 6
+                        "enum": ['male', 'female']
                     },
                     'relatives': {
                         'type': 'array',
