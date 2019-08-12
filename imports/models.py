@@ -11,6 +11,9 @@ class Imports_queries(models.Manager):
     def get_data_for_patch(self, imports_id, citizens):
         return self.filter(import_id=imports_id, citizen_id=citizens)
 
+    def get_data_for_patch_relatives(self, imports_id):
+        return self.filter(import_id=imports_id)
+
     def get_import_data(self, imports_id):
         return self.filter(import_id=imports_id)
 
@@ -21,7 +24,7 @@ class Imports(models.Model):
     town = models.CharField(max_length=200, blank=False, null=False)
     street = models.CharField(max_length=200, blank=False, null=False)
     building = models.CharField(max_length=50, blank=False, null=False)
-    appartment = models.IntegerField(blank=False, null=False)
+    apartment = models.IntegerField(blank=False, null=False)
     name = models.CharField(max_length=1000, blank=False, null=False)
     birth_date = models.DateField(blank=False, null=False)
     gender = models.CharField(max_length=6, blank=False, null=False)

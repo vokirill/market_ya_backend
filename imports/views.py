@@ -24,13 +24,13 @@ def upload_treatments(request):
         data = json.loads(request.body.decode('utf-8'))
         validate(data, IMPORTS_SHEMMA)
     except ValidationError as exc:
-        return JsonResponse({'errors': exc.message}, status = 400)
+        return JsonResponse({'errors': exc.message}, status=400)
     except json.JSONDecodeError():
-        return JsonResponse({'errors': 'Invalid JSON'}, status = 400)
+        return JsonResponse({'errors': 'Invalid JSON'}, status=400)
 
     citizen_list = data['citizens']
     if not relativies_validation(citizen_list):
-        return JsonResponse({'errors': 'bad relatives dependencies'}, status = 400)
+        return JsonResponse({'errors': 'bad relatives or citizen_id dependencies'}, status = 400)
 
     import_id_ = Imports.objects.get_max_import_id()['import_id__max']
     if import_id_:
@@ -46,7 +46,7 @@ def upload_treatments(request):
 
     response = {
         "data":{
-            'import_id': import_id_
+            "import_id": import_id_
         }
     }
     return JsonResponse(response, status = 201)
@@ -62,6 +62,9 @@ def patch_imports(request, imports_id, citizens):
         return JsonResponse({'errors': exc.message}, status = 400)
     except json.JSONDecodeError():
         return JsonResponse({'errors': 'Invalid JSON'}, status = 400)
+
+    #if 'relatives' in data.keys():
+        #changed_row = Imports.objects.get_data_for_patch_relatives(imports_id)[0]
 
     changed_row = Imports.objects.get_data_for_patch(imports_id, citizens)[0]
     for key in data.keys():
