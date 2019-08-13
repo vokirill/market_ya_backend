@@ -1,10 +1,6 @@
 import numpy as np
 
-def date_string(date_string):
-    date = date_string.split('.')
-    return '{0}-{1}-{2}'.format(date[2], date[1], date[0])
-
-
+date_format = '%Y-%m-%d'
 
 def relativies_validation(data):
     id_to_index = {}
@@ -13,8 +9,8 @@ def relativies_validation(data):
     unique_test = []
     cur_index = 0 # составляем матрицу смежности и проверяем
     for elem in data:
+        unique_test.append(elem['citizen_id'])
         if elem['citizen_id'] not in id_to_index.keys():
-            unique_test.append(elem['citizen_id'])
             id_to_index[elem['citizen_id']] = cur_index
             cur_index+=1
         for relative in elem['relatives']:
@@ -63,3 +59,31 @@ data = {
         },
         ]}
 print(relativies_validation(data['citizens']))
+data = {
+            'citizens': [{
+                'citizen_id': 1,
+                'town': 'Москва',
+                'street': 'Ленинский проспект',
+                'building': '1к5стр6',
+                'apartment': 7,
+                'name': 'Пупкин Иван Петрович',
+                'birth_date': '05.02.2001',
+                'gender': 'male',
+                'relatives': [],
+            },
+            {
+                'citizen_id': 1,
+                'town': 'Зажопинск',
+                'street': 'Ленинский проспект',
+                'building': '2к6',
+                'apartment': 7,
+                'name': 'Пискосистыq Сидор Сидорович',
+                'birth_date': '05.02.1965',
+                'gender': 'male',
+                'relatives': [],
+            },
+        ]}
+
+print(relativies_validation(data['citizens']))
+
+

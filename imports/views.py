@@ -3,16 +3,18 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from django.http import HttpResponse
 from jsonschema import validate
+from jsonschema import FormatChecker
 from jsonschema.exceptions import ValidationError
 from .shemas import *
 import json
-from django.core import serializers
-from django.utils.dateparse import parse_date
-from .support_functions import *
+
+from .support_functions import date_format
+from .support_functions import relativies_validation
 from django.db import connection
 
 from .models import *
 import numpy as np
+import datetime
 
 
 from .models import Imports
@@ -22,7 +24,7 @@ from .models import Imports
 def upload_treatments(request):
     try:
         data = json.loads(request.body.decode('utf-8'))
-        validate(data, IMPORTS_SHEMMA)
+        validate(data, IMPORTS_SHEMMA, format_checker=FormatChecker())
     except ValidationError as exc:
         return JsonResponse({'errors': exc.message}, status=400)
     except json.JSONDecodeError():
@@ -40,7 +42,12 @@ def upload_treatments(request):
 
     for citizen in citizen_list:
         citizen['relatives'] = ','.join(map(str, citizen['relatives']))
-        citizen['birth_date'] = date_string(citizen['birth_date'])
+        try:
+            date = citizen['birth_date'].split('.')
+            date = '{0}-{1}-{2}'.format(date[2], date[1], date[0])
+            citizen['birth_date'] = datetime.datetime.strptime(date, date_format)
+        except:
+            return JsonResponse({'errors': 'wrong date {}'.format(citizen['birth_date'])}, status=400)
         db_row = Imports(import_id = import_id_, **citizen)
         db_row.save()
 
@@ -63,14 +70,14 @@ def patch_imports(request, imports_id, citizens):
     except json.JSONDecodeError():
         return JsonResponse({'errors': 'Invalid JSON'}, status = 400)
 
-    #if 'relatives' in data.keys():
-        #changed_row = Imports.objects.get_data_for_patch_relatives(imports_id)[0]
+    if 'relatives' in data.keys():
+        changed_row = Imports.objects.get_data_for_patch_relatives(imports_id)[0]
 
     changed_row = Imports.objects.get_data_for_patch(imports_id, citizens)[0]
     for key in data.keys():
         if key == 'relatives':
             data[key] = ','.join(map(str, data[key]))
-        elif key == 'birth_date':
+        if key == 'birth_date':
             data[key] = date_string(data[key])
         setattr(changed_row, str(key), str(data[key]))
     changed_row.save()

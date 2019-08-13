@@ -15,7 +15,7 @@ PATCH_SHEMMA = {
             },
             'apartment':{
                 'type': 'integer',
-                'minimum': 1
+                'minimum': 0
             },
             'name': {
                 'type': 'string',
@@ -36,6 +36,7 @@ PATCH_SHEMMA = {
 
             },
         },
+        'additionalProperties': False,
 }
 
 
@@ -65,14 +66,15 @@ IMPORTS_SHEMMA = {
                     },
                     'apartment':{
                         'type': 'integer',
-                        'minimum': 1
+                        'minimum': 0
                     },
                     'name': {
                         'type': 'string',
                         'minLength': 1,
                     },
                     'birth_date':{
-                        'type': 'string'
+                        'type': 'string',
+                        'pattern': "^(0?[1-9]|[12][0-9]|3[01]).(0?[1-9]|1[012]).\d{4}$",
                     },
                     'gender': {
                         'type': 'string',
@@ -86,10 +88,12 @@ IMPORTS_SHEMMA = {
 
                     },
                 },
-                'required': ['citizen_id','town','street','building', 'apartment', 'name', 'birth_date','gender','relatives']
+                'required': ['citizen_id', 'town', 'street', 'building', 'apartment', 'name', 'birth_date', 'gender', 'relatives'],
+                'additionalProperties': False,
             }
         }
     },
-    'required':['citizens']
+    'required':['citizens'],
+    'additionalProperties': False,
 }
 
