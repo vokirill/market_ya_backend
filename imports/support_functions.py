@@ -2,6 +2,19 @@ import numpy as np
 
 date_format = '%Y-%m-%d'
 
+def datetime_to_date(date):
+    if date.day<10:
+        day = '0{}'.format(date.day)
+    else:
+        day = date.day
+
+    if date.month<10:
+        month = '0{}'.format(date.month)
+    else:
+        month = date.month
+
+    return '{}.{}.{}'.format(day,month,date.year)
+
 def relativies_validation(data):
     id_to_index = {}
     amount_of_citizens = len(data)

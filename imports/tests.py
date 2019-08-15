@@ -5,7 +5,7 @@ import json
 from imports.models import Imports
 
 class ImportsTest(TestCase):
-
+    maxDiff = None
     def test_upload_treatments_valid_data(self):
         data = {
         'citizens': [{
@@ -373,3 +373,364 @@ class ImportsTest(TestCase):
         response = self.client.post('/imports', json.dumps(data), content_type="application/json")
         import_id_ = Imports.objects.get_max_import_id()['import_id__max']
         self.assertEqual(import_id_, 3)
+
+    def test_normal_patch(self):
+        data = {
+            'citizens': [{
+                'citizen_id': 1,
+                'town': 'Москва',
+                'street': 'Ленинский проспект',
+                'building': '1к5стр6',
+                'apartment': 7,
+                'name': 'Пупкин Иван Петрович',
+                'birth_date': '05.02.2001',
+                'gender': 'male',
+                'relatives': [2],
+            },
+            {
+                'citizen_id': 2,
+                'town': 'Зажопинск',
+                'street': 'Ленинский проспект',
+                'building': '2к6',
+                'apartment': 7,
+                'name': 'Пискосистый Сидор Сидорович',
+                'birth_date': '05.02.1965',
+                'gender': 'male',
+                'relatives': [1, 3],
+            },
+            {
+                'citizen_id': 3,
+                'town': 'Пердюльск',
+                'street': 'Пьяных октябрят',
+                'building': '2к6',
+                'apartment': 10,
+                'name': 'Бдышь Адольф Иванович',
+                'birth_date': '05.03.1980',
+                'gender': 'male',
+                'relatives': [2],
+            },
+            ]}
+
+        response = self.client.post('/imports', json.dumps(data), content_type="application/json")
+        response = self.client.post('/imports', json.dumps(data), content_type="application/json")
+        self.assertEqual(response.status_code, 201)
+
+
+        patch_data = {
+            'town': 'Москва',
+            'street': 'улица',
+        }
+        response = self.client.patch('/imports/1/citizens/2', json.dumps(patch_data), content_type="application/json")
+        self.assertEqual(response.status_code, 200)
+        good_response = {
+            "data": {
+                'citizen_id': 2,
+                'town': 'Москва',
+                'street': 'улица',
+                'building': '2к6',
+                'apartment': 7,
+                'name': 'Пискосистый Сидор Сидорович',
+                'birth_date': '05.02.1965',
+                'gender': 'male',
+                'relatives': [1, 3],
+            }
+        }
+        self.assertEqual(json.loads(response.content.decode('utf-8')), good_response)
+        patch_data = {
+            'town': '',
+            'street': 1,
+        }
+        response = self.client.patch('/imports/1/citizens/2', json.dumps(patch_data), content_type="application/json")
+        self.assertEqual(response.status_code, 400)
+        good_response = {'errors': "'' is too short"}
+        self.assertEqual(json.loads(response.content.decode('utf-8')), good_response)
+
+        patch_data = {
+            'relatives': [3],
+        }
+        response = self.client.patch('/imports/1/citizens/2', json.dumps(patch_data), content_type="application/json")
+        self.assertEqual(response.status_code, 200)
+
+        good_response = {
+            "data": {
+                'citizen_id': 2,
+                'town': 'Москва',
+                'street': 'улица',
+                'building': '2к6',
+                'apartment': 7,
+                'name': 'Пискосистый Сидор Сидорович',
+                'birth_date': '05.02.1965',
+                'gender': 'male',
+                'relatives': [3],
+            }
+        }
+        self.assertEqual(json.loads(response.content.decode('utf-8')), good_response)
+        #test_changes in other rows
+        other_citizens = Imports.objects.get_data_for_patch_relatives(imports_id=1).values('relatives')
+        answer = [{'relatives': ''}, {'relatives': '3'}, {'relatives': '2'}]
+        self.assertEqual(list(other_citizens), answer)
+
+        patch_data = {
+            'relatives': [1,3],
+        }
+        response = self.client.patch('/imports/1/citizens/2', json.dumps(patch_data), content_type="application/json")
+        self.assertEqual(response.status_code, 200)
+
+        good_response = {
+            "data": {
+                'citizen_id': 2,
+                'town': 'Москва',
+                'street': 'улица',
+                'building': '2к6',
+                'apartment': 7,
+                'name': 'Пискосистый Сидор Сидорович',
+                'birth_date': '05.02.1965',
+                'gender': 'male',
+                'relatives': [1,3],
+            }
+        }
+        self.assertEqual(json.loads(response.content.decode('utf-8')), good_response)
+        other_citizens = Imports.objects.get_data_for_patch_relatives(imports_id=1).values('relatives')
+        answer = [{'relatives': '2'}, {'relatives': '1,3'}, {'relatives': '2'}]
+        self.assertEqual(list(other_citizens), answer)
+
+        patch_data = {
+            'town': None,
+        }
+        response = self.client.patch('/imports/1/citizens/2', json.dumps(patch_data), content_type="application/json")
+        self.assertEqual(response.status_code, 400)
+
+    def test_get_imports(self):
+        data = {
+            'citizens': [{
+                'citizen_id': 1,
+                'town': 'Москва',
+                'street': 'Ленинский проспект',
+                'building': '1к5стр6',
+                'apartment': 7,
+                'name': 'Пупкин Иван Петрович',
+                'birth_date': '05.02.2001',
+                'gender': 'male',
+                'relatives': [2],
+            },
+            {
+                'citizen_id': 2,
+                'town': 'Зажопинск',
+                'street': 'Ленинский проспект',
+                'building': '2к6',
+                'apartment': 7,
+                'name': 'Пискосистый Сидор Сидорович',
+                'birth_date': '05.02.1965',
+                'gender': 'male',
+                'relatives': [1, 3],
+            },
+            {
+                'citizen_id': 3,
+                'town': 'Пердюльск',
+                'street': 'Пьяных октябрят',
+                'building': '2к6',
+                'apartment': 10,
+                'name': 'Бдышь Адольф Иванович',
+                'birth_date': '05.03.1980',
+                'gender': 'male',
+                'relatives': [2],
+            },
+            ]}
+
+        response = self.client.post('/imports', json.dumps(data), content_type="application/json")
+        response = self.client.post('/imports', json.dumps(data), content_type="application/json")
+
+        response = self.client.get('/imports/1/citizens')
+        self.assertEqual(response.status_code, 200)
+        good_response =  {
+            'data': [{
+                'citizen_id': 1,
+                'town': 'Москва',
+                'street': 'Ленинский проспект',
+                'building': '1к5стр6',
+                'apartment': 7,
+                'name': 'Пупкин Иван Петрович',
+                'birth_date': '05.02.2001',
+                'gender': 'male',
+                'relatives': [2],
+            },
+            {
+                'citizen_id': 2,
+                'town': 'Зажопинск',
+                'street': 'Ленинский проспект',
+                'building': '2к6',
+                'apartment': 7,
+                'name': 'Пискосистый Сидор Сидорович',
+                'birth_date': '05.02.1965',
+                'gender': 'male',
+                'relatives': [1, 3],
+            },
+            {
+                'citizen_id': 3,
+                'town': 'Пердюльск',
+                'street': 'Пьяных октябрят',
+                'building': '2к6',
+                'apartment': 10,
+                'name': 'Бдышь Адольф Иванович',
+                'birth_date': '05.03.1980',
+                'gender': 'male',
+                'relatives': [2],
+            },
+            ]}
+        self.assertEqual(json.loads(response.content.decode('utf-8')), good_response)
+
+    def test_birth_date(self):
+        data = {
+            'citizens': [{
+                'citizen_id': 1,
+                'town': 'Москва',
+                'street': 'Ленинский проспект',
+                'building': '1к5стр6',
+                'apartment': 7,
+                'name': 'Пупкин Иван Петрович',
+                'birth_date': '05.02.2001',
+                'gender': 'male',
+                'relatives': [2,3,4],
+            },
+            {
+                'citizen_id': 2,
+                'town': 'Зажопинск',
+                'street': 'Ленинский проспект',
+                'building': '2к6',
+                'apartment': 7,
+                'name': 'Пискосистый Сидор Сидорович',
+                'birth_date': '05.03.1965',
+                'gender': 'male',
+                'relatives': [1, 5],
+            },
+            {
+                'citizen_id': 3,
+                'town': 'Пердюльск',
+                'street': 'Пьяных октябрят',
+                'building': '2к6',
+                'apartment': 10,
+                'name': 'Бдышь Адольф Иванович',
+                'birth_date': '05.04.1980',
+                'gender': 'male',
+                'relatives': [4,1],
+            },
+                {
+                    'citizen_id': 4,
+                    'town': 'Пердюльск',
+                    'street': 'Пьяных октябрят',
+                    'building': '2к6',
+                    'apartment': 10,
+                    'name': 'Бдышь Адольф Иванович',
+                    'birth_date': '05.10.1980',
+                    'gender': 'male',
+                    'relatives': [3,6,1],
+                },
+                {
+                    'citizen_id': 5,
+                    'town': 'Пердюльск',
+                    'street': 'Пьяных октябрят',
+                    'building': '2к6',
+                    'apartment': 10,
+                    'name': 'Бдышь Адольф Иванович',
+                    'birth_date': '05.02.1980',
+                    'gender': 'male',
+                    'relatives': [6,2],
+                },
+                {
+                    'citizen_id': 6,
+                    'town': 'Пердюльск',
+                    'street': 'Пьяных октябрят',
+                    'building': '2к6',
+                    'apartment': 10,
+                    'name': 'Бдышь Адольф Иванович',
+                    'birth_date': '05.02.1980',
+                    'gender': 'male',
+                    'relatives': [5,4],
+                },
+            ]}
+
+        response = self.client.post('/imports', json.dumps(data), content_type="application/json")
+        response = self.client.post('/imports', json.dumps(data), content_type="application/json")
+
+        response = self.client.get('/imports/1/citizens/birthdays')
+        good_response = {"data":
+                             {"1": [],
+                              "2": [{"citizen_id": 2, "presents": 2},
+                                    {"citizen_id": 3, "presents": 1},
+                                    {"citizen_id": 4, "presents": 2},
+                                    {"citizen_id": 5, "presents": 1},
+                                    {"citizen_id": 6, "presents": 1}],
+                              "3": [{"citizen_id": 1, "presents": 1},
+                                    {"citizen_id": 5, "presents": 1}],
+                              "4": [{"citizen_id": 1, "presents": 1},
+                                    {"citizen_id": 4, "presents": 1}],
+                              "5": [],
+                              "6": [],
+                              "7": [],
+                              "8": [],
+                              "9": [],
+                              "10": [{"citizen_id": 1, "presents": 1},
+                                     {"citizen_id": 3, "presents": 1},
+                                     {"citizen_id": 6, "presents": 1}],
+                              "11": [],
+                              "12": []}}
+
+        self.assertEqual(json.loads(response.content.decode('utf-8')), good_response)
+
+    def test_percentile(self):
+        data = {
+            'citizens': [{
+                'citizen_id': 1,
+                'town': 'Москва',
+                'street': 'Ленинский проспект',
+                'building': '1к5стр6',
+                'apartment': 7,
+                'name': 'Пупкин Иван Петрович',
+                'birth_date': '05.02.2001',
+                'gender': 'male',
+                'relatives': [2],
+            },
+                {
+                    'citizen_id': 2,
+                    'town': 'Москва',
+                    'street': 'Ленинский проспект',
+                    'building': '2к6',
+                    'apartment': 7,
+                    'name': 'Пискосистый Сидор Сидорович',
+                    'birth_date': '05.03.1965',
+                    'gender': 'male',
+                    'relatives': [1],
+                },
+                {
+                    'citizen_id': 3,
+                    'town': 'Москва',
+                    'street': 'Пьяных октябрят',
+                    'building': '2к6',
+                    'apartment': 10,
+                    'name': 'Бдышь Адольф Иванович',
+                    'birth_date': '05.04.1980',
+                    'gender': 'male',
+                    'relatives': [4],
+                },
+                {
+                    'citizen_id': 4,
+                    'town': 'Москва',
+                    'street': 'Пьяных октябрят',
+                    'building': '2к6',
+                    'apartment': 10,
+                    'name': 'Бдышь Адольф Иванович',
+                    'birth_date': '05.10.1980',
+                    'gender': 'male',
+                    'relatives': [3],
+                },
+            ]}
+
+        response = self.client.post('/imports', json.dumps(data), content_type="application/json")
+
+        response = self.client.get('/imports/1/citizens')
+        self.assertEqual(response.status_code, 200)
+
+
+
+
+
