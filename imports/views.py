@@ -7,7 +7,6 @@ from jsonschema import FormatChecker
 from jsonschema.exceptions import ValidationError
 from .shemas import *
 import json
-
 from .support_functions import date_format
 from .support_functions import relativies_validation
 from .support_functions import datetime_to_date
@@ -147,7 +146,6 @@ def get_imports(request, imports_id):
         elem['relatives'] = list(map(int, elem['relatives'].split(',')))
         sum_list.append(elem)
 
-    #return HttpResponse(str({'data':sum_list}), status=200)
     return HttpResponse(json.dumps({'data': sum_list},ensure_ascii=False), content_type="application/json", status=200)
 
 @require_http_methods(["GET"])
@@ -186,3 +184,6 @@ def age_percentile (request, imports_id):
         percentile = np.percentile(list(map(int , elem[1].split(','))), [0.5, 0.75, 0.99], interpolation='linear')
         answer['data'].append({'town':elem[0], 'p50':round(percentile[0],2), 'p75':round(percentile[1],2), 'p99':round(percentile[2],2)})
     return HttpResponse(json.dumps( answer,ensure_ascii=False), content_type="application/json", status=200)
+
+def response_test_view(request):
+    return HttpResponse("Welcom to my project test page ")
