@@ -46,7 +46,12 @@ def upload_treatments(request):
         try:
             date = citizen['birth_date'].split('.')
             date = '{0}-{1}-{2}'.format(date[2], date[1], date[0])
-            citizen['birth_date'] = datetime.datetime.strptime(date, date_format)
+            date = datetime.datetime.strptime(date, date_format).date()
+            dt = datetime.datetime.now().date()
+            if date >= dt:
+                return JsonResponse({'errors': 'person to young'}, status=400)
+            else:
+                citizen['birth_date'] = date
         except:
             return JsonResponse({'errors': 'wrong date {}'.format(citizen['birth_date'])}, status=400)
         db_row = Imports(import_id = import_id_, **citizen)
@@ -72,6 +77,8 @@ def patch_imports(request, imports_id, citizens):
     except json.JSONDecodeError():
         return JsonResponse({'errors': 'Invalid JSON'}, status = 400)
 
+    if data == {}:
+        return JsonResponse({'errors': 'empty JSON'}, status = 400)
 
     changed_row = Imports.objects.get_data_for_patch(imports_id, citizens)[0]
 
@@ -83,7 +90,6 @@ def patch_imports(request, imports_id, citizens):
             deletion = list(cur_relatives - new_relatives)
             addition = list(new_relatives - cur_relatives)
             if deletion != [] or addition != []:
-                #relatives_row = Imports.objects.get_data_for_patch_relatives(imports_id)
                 relatives_list = Imports.objects.get_data_for_patch_relatives(imports_id).values('citizen_id', 'relatives')
                 for i, elem in enumerate(relatives_list):
                     indicator = 0
@@ -112,7 +118,12 @@ def patch_imports(request, imports_id, citizens):
             try:
                 date = data[key].split('.')
                 date = '{0}-{1}-{2}'.format(date[2], date[1], date[0])
-                data[key] = datetime.datetime.strptime(date, date_format)
+                date = datetime.datetime.strptime(date, date_format).date()
+                dt = datetime.datetime.now().date()
+                if date >= dt:
+                    return JsonResponse({'errors': 'person to young'}, status=400)
+                else:
+                    data[key] = date
             except:
                 return JsonResponse({'errors': 'wrong date {}'.format(data[key])}, status=400)
         setattr(changed_row, str(key), str(data[key]))

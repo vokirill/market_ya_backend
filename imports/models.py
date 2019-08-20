@@ -19,16 +19,16 @@ class Imports_queries(models.Manager):
 
 
 class Imports(models.Model):
-    import_id = models.IntegerField(blank=False)
-    citizen_id = models.IntegerField(blank=False)
-    town = models.CharField(max_length=200, blank=False)
-    street = models.CharField(max_length=200, blank=False)
-    building = models.CharField(max_length=50, blank=False)
-    apartment = models.IntegerField(blank=False)
-    name = models.CharField(max_length=1000, blank=False)
+    import_id = models.IntegerField(blank=False, null = False)
+    citizen_id = models.IntegerField(blank=False, null = False)
+    town = models.CharField(max_length=200, blank=False, null = False)
+    street = models.CharField(max_length=200, blank=False, null = False)
+    building = models.CharField(max_length=50, blank=False, null = False)
+    apartment = models.IntegerField(blank=False, null = False)
+    name = models.CharField(max_length=1000, blank=False, null = False)
     birth_date = models.DateField(blank=False, null=False)
-    gender = models.CharField(max_length=6, blank=False)
-    relatives = models.CharField(max_length=1000, blank=False)
+    gender = models.CharField(max_length=6, blank=False, null = False)
+    relatives = models.CharField(max_length=1000, blank=False, null = False)
     objects = Imports_queries()
 
 

@@ -4,14 +4,17 @@ PATCH_SHEMMA = {
             'town':{
                 'type': 'string',
                 'minLength': 1,
+                'maxLength': 256,
             },
             'street':{
                 'type': 'string',
-                'minLength': 1
+                'minLength': 1,
+                'maxLength': 256,
             },
             'building': {
                 'type': 'string',
-                'minLength': 1
+                'minLength': 1,
+                'maxLength': 256,
             },
             'apartment':{
                 'type': 'integer',
@@ -20,9 +23,11 @@ PATCH_SHEMMA = {
             'name': {
                 'type': 'string',
                 'minLength': 1,
+                'maxLength': 256,
             },
             'birth_date':{
-                'type': 'string'
+                'type': 'string',
+                'pattern': "^(0?[1-9]|[12][0-9]|3[01]).(0?[1-9]|1[012]).\d{4}$",
             },
             'gender': {
                 'type': 'string',
@@ -55,14 +60,17 @@ IMPORTS_SHEMMA = {
                     'town':{
                         'type': 'string',
                         'minLength': 1,
+                        'maxLength': 256,
                     },
                     'street':{
                         'type': 'string',
                         'minLength': 1,
+                        'maxLength': 256,
                     },
                     'building': {
                         'type': 'string',
                         'minLength': 1,
+                        'maxLength': 256,
                     },
                     'apartment':{
                         'type': 'integer',
@@ -71,6 +79,7 @@ IMPORTS_SHEMMA = {
                     'name': {
                         'type': 'string',
                         'minLength': 1,
+                        'maxLength': 256,
                     },
                     'birth_date':{
                         'type': 'string',

@@ -730,6 +730,32 @@ class ImportsTest(TestCase):
         response = self.client.get('/imports/1/citizens')
         self.assertEqual(response.status_code, 200)
 
+        patch_data = {}
+        response = self.client.patch('/imports/1/citizens/2', json.dumps(patch_data), content_type="application/json")
+        self.assertEqual(response.status_code, 400)
+
+        #young_user
+        data = {
+            'citizens': [{
+                'citizen_id': 1,
+                'town': 'Москва',
+                'street': 'Ленинский проспект',
+                'building': '1к5стр6',
+                'apartment': 7,
+                'name': 'Пупкин Иван Петрович',
+                'birth_date': '21.08.2019',
+                'gender': 'male',
+                'relatives': [],
+            },
+            ]
+        }
+        response = self.client.post('/imports', json.dumps(data), content_type="application/json")
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(json.loads(response.content.decode('utf-8')), {'errors': 'person to young'})
+
+
+
+
 
 
 
